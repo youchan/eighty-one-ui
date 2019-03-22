@@ -9,6 +9,10 @@ class BoardView
     @props[:game].cells(@props[:turn] == "gote").then do |cells|
       set_state(cells: cells)
     end
+    @props[:change_listener] << Proc.new do |cells|
+      cells = cells.reverse if @props[:turn] == "gote"
+      set_state(cells: cells)
+    end
   end
 
   def movable?(col, row)

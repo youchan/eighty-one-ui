@@ -1,11 +1,12 @@
 class Game
   attr_reader :sente, :gote
 
-  def initialize(sente = nil, gote = nil)
+  def initialize(sente = nil, gote = nil, &on_change)
     @sente = sente
     @gote = gote
     @board = EightyOne::Board.new
     @board.initial_state
+    @listener = on_change
   end
 
   def cells(reverse=nil)
@@ -22,7 +23,9 @@ class Game
   end
 
   def move(col, row, dest_col, dest_row)
-    @board.move_from(col, row).to(dest_col, dest_row)
+    piece = @board.move_from(col, row).to(dest_col, dest_row)
+    sells = self.cells
+    @listener.call(cells, piece)
     cells
   end
 end

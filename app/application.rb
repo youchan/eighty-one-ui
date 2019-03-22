@@ -40,6 +40,11 @@ class AppView
         end
       end
 
+      @change_listener = []
+      @remote.on(:change, account.uid) do |cells|
+        @change_listener.each {|listener| listener.call(cells) }
+      end
+
       update_login_accounts(account)
     end
   end
@@ -69,12 +74,13 @@ class AppView
     start_game = self.method(:request_new_game)
     login_accounts = @state[:login_accounts]
     opposite_name = @state[:opposite_name]
+    change_listener = @change_listener
 
     div(class: "main") do
       if account
         if game
           PlayerPane.el(class: "player oppsite", name: opposite_name, side: "opposite")
-          BoardView.el(game: game, turn: turn)
+          BoardView.el(game: game, change_listener: change_listener, turn: turn)
           PlayerPane.el(class: "player self", name: account.uid, side: "self")
         else
           LobbyView.el(account: account, login_accounts: login_accounts, on_start: start_game)
