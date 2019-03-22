@@ -6,8 +6,7 @@ class BoardView
   state :mobable_cells, []
 
   before_mount do
-    @props[:game].cells.then do |cells|
-      puts ">>>>>> cells: #{cells}"
+    @props[:game].cells(@props[:turn] == "gote").then do |cells|
       set_state(cells: cells)
     end
   end
@@ -21,7 +20,7 @@ class BoardView
   end
 
   def handle_cell_click(cell, col, row)
-    if cell && cell.turn == "sente"
+    if cell && cell.turn == @props[:turn]
       @props[:game].dests_from(col, row).then do |dests|
         set_state(selected_cell: [col, row], mobable_cells: dests)
       end
@@ -36,6 +35,7 @@ class BoardView
   end
 
   def render
+    turn = @props[:turn]
     div({class: "board"},
       @state[:cells].each_slice(9).each_with_index.map {|row, y|
         rownum = y + 1
@@ -44,6 +44,7 @@ class BoardView
             colnum = 9 - x
             CellView.el(
               cell: cell,
+              turn: turn,
               selected: selected?(colnum, rownum),
               movable: movable?(colnum, rownum),
               onClick: -> { handle_cell_click(cell, colnum, rownum) }

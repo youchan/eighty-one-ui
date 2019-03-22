@@ -8,10 +8,13 @@ class Game
     @board.initial_state
   end
 
-  def cells
-    @board.each_cells.map do |piece|
+  def cells(reverse=nil)
+    cells = @board.each_cells.map do |piece|
       piece && Piece.new(piece.face.symbol, piece.turn)
     end
+
+    cells = cells.reverse if reverse
+    cells
   end
 
   def dests_from(col, row)

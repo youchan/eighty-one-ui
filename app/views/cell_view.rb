@@ -3,7 +3,8 @@ class CellView
 
   def render
     cell = @props[:cell]
-    side = cell && cell.turn == "sente" ? "self" : "opposite"
+    turn = @props[:turn]
+    side = cell && cell.turn == turn ? "self" : "opposite"
     addition = @props[:selected] ? " selected" : ""
     addition += @props[:movable] ? " movable" : ""
     div({class: "cell#{addition}", onClick: @props[:onClick]}) do
